@@ -11,6 +11,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
@@ -18,13 +19,14 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView info;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
-    private JSONArray dataArray;
+    private AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +44,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-
                 /* make the API call */
-                GraphRequest request = GraphRequest.newMyFriendsRequest(
+                GraphRequestAsyncTask request = GraphRequest.newMeRequest(
                         accessToken,
-                        new GraphRequest.GraphJSONArrayCallback() {
+                        new GraphRequest.GraphJSONObjectCallback() {
                             @Override
-                            public void onCompleted(JSONArray array, GraphResponse response) {
+                            public void onCompleted(JSONObject object, GraphResponse response) {
                                 // Insert your code here
-                                dataArray = array;
+                                // Not doing anything at the moment
                             }
-                        });
-
-                request.executeAsync();
+                        }).executeAsync();
 
                 info.setText(
                         "User ID: "
@@ -62,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
                                 + "\n" +
                                 "Auth Token: "
                                 + loginResult.getAccessToken().getToken()
-                                + "\n" +
-                                "You have " + dataArray + " friends on Facebook!"
                 );
             }
 
